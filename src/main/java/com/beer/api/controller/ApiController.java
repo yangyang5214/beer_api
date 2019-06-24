@@ -15,6 +15,10 @@ public class ApiController {
     @Autowired
     private ApiService apiService;
 
+    @GetMapping("hello")
+    public Object test() {
+        return "Hello, I'm beer!";
+    }
 
     @GetMapping("/daily/photo/{seq}")
     public Object getDailyPhoto(@PathVariable("seq") String seq) {
