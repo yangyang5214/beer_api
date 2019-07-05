@@ -23,5 +23,11 @@ public class ApiController {
     @GetMapping("/daily/photo/{seq}")
     public Object getDailyPhoto(@PathVariable("seq") String seq) {
         return apiService.getDailyPhoto(seq);
+
+    }
+
+    @GetMapping("underLineToCamelCase")
+    public Object underLineToCamelCase(@RequestParam String params) {
+        return apiService.underLineToCamelCase(params);
     }
 }
