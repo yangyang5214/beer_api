@@ -1,14 +1,23 @@
 package com.beer.api.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.qcloud.cos.COSClient;
+import com.qcloud.cos.exception.CosClientException;
+import com.qcloud.cos.exception.CosServiceException;
+import com.qcloud.cos.model.PutObjectRequest;
+import com.qcloud.cos.model.PutObjectResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * @author beer
@@ -21,6 +30,22 @@ public class ApiService {
 
     @Autowired
     private PhotoService photoService;
+
+
+    @Autowired
+    private COSClient cosClient;
+
+    @Value("${cos.bucket.name}")
+    private String bucketName;
+
+    @Value("${cos.upload.key}")
+    private String uploadKey;
+
+
+    /**
+     * markdown image 的语法
+     */
+    private final String IMAGE_MARKDOWN = "![{0}]({1})";
 
     /**
      * 获取每日图片
@@ -63,5 +88,32 @@ public class ApiService {
             stringBuilder.append(";");
         }
         return stringBuilder.toString();
+    }
+
+    public String uploadImage(MultipartFile file, String description, String key) {
+        if (!Objects.equals(uploadKey, key)) {
+            throw new IllegalArgumentException("暗号错误");
+        }
+        try {
+            String fileName = file.getOriginalFilename();
+            String prefix = fileName.substring(fileName.lastIndexOf("."));
+            // 用uuid作为文件名，防止生成的临时文件重复
+            final File tempFile = File.createTempFile(UUID.randomUUID().toString(), prefix);
+            file.transferTo(tempFile);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, description + "." + prefix, tempFile);
+            cosClient.putObject(putObjectRequest);
+            if (tempFile.exists()) {
+                tempFile.delete();
+            }
+            String url = "https://beer-1256523277.cos.ap-shanghai.myqcloud.com/" + description + "." + prefix;
+            String localMkImage = IMAGE_MARKDOWN;
+            return MessageFormat.format(localMkImage, description, url);
+        } catch (CosServiceException serverException) {
+            throw new RuntimeException("CosServiceException: " + serverException.getMessage());
+        } catch (CosClientException clientException) {
+            throw new RuntimeException("clientException: " + clientException.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException("IOException: " + e.getMessage());
+        }
     }
 }
