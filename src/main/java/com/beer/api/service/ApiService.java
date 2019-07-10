@@ -1,12 +1,10 @@
 package com.beer.api.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.exception.CosClientException;
 import com.qcloud.cos.exception.CosServiceException;
 import com.qcloud.cos.model.PutObjectRequest;
-import com.qcloud.cos.model.PutObjectResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +38,9 @@ public class ApiService {
 
     @Value("${cos.upload.key}")
     private String uploadKey;
+
+    @Value("${jrebel.url}")
+    private String jrebelUrl;
 
 
     /**
@@ -116,4 +117,10 @@ public class ApiService {
             throw new RuntimeException("IOException: " + e.getMessage());
         }
     }
+
+    public String getJrebelLicense() {
+        String uuid = UUID.randomUUID().toString();
+        return jrebelUrl + uuid;
+    }
+
 }

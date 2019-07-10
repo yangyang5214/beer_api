@@ -44,4 +44,9 @@ public class ApiController {
         }
         return apiService.uploadImage(file, description, key);
     }
+
+    @GetMapping("jrebel")
+    public Object getJrebelLicense() {
+        return apiService.getJrebelLicense();
+    }
 }
