@@ -93,7 +93,7 @@ public class ApiService {
 
     public String uploadImage(MultipartFile file, String description, String key) {
         if (!Objects.equals(uploadKey, key)) {
-            throw new IllegalArgumentException("暗号错误");
+            throw new IllegalArgumentException("暗号错误，你不是 beer or beer friends!");
         }
         try {
             String fileName = file.getOriginalFilename();
