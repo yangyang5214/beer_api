@@ -1,0 +1,29 @@
+server:
+  port: 8888
+  servlet:
+    context-path: /beer/
+
+cos:
+  bucket:
+    name: 111
+  region:
+    name: 111
+  secret:
+    id: 111
+    key: 111
+  upload:
+    key: 111
+
+daily:
+  photo:
+    url: https://cn.bing.com/HPImageArchive.aspx?format=js&idx={0}&n=1
+
+jrebel:
+  url: https://jrebel.hexianwei.com/
+
+logging:
+  pattern:
+    level: INFO
+  file:
+    name: ../logs/beer_api.log
+    max-history: 30

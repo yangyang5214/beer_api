@@ -5,12 +5,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.beer.api.service.ToolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
+import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("tool")
 public class ToolController {
 
-    @Autowired
+    @Resource
     private ToolService toolService;
 
     @GetMapping("{param}")
